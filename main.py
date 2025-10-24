@@ -30,7 +30,43 @@ player_to_move = PLAYER_1
 def cell_clicked(cell_number):
     cell_objects[cell_number].config(state=tk.DISABLED) # make it not clickable
     cell_objects[cell_number].config(text = player_to_move) # replace text with the players icon
-    next_player() # after making a move, the next player moves
+    if not win_check(): # check if no one has won yet
+        next_player() # after making a move, the next player moves
+    else: # someone has won
+        print("GAME OVER")
+
+
+def win_check():
+    # 1 2 3
+    # 4 5 6
+    # 7 8 9
+    
+    # check if there are 3 in a row that are THE SAME and NOT blank
+    # .cget gets the config data
+
+    # ROWS
+    if cell_objects[1].cget("text") == cell_objects[2].cget("text") == cell_objects[3].cget("text") != "":
+        return True
+    if cell_objects[4].cget("text") == cell_objects[5].cget("text") == cell_objects[6].cget("text") != "":
+        return True
+    if cell_objects[7].cget("text") == cell_objects[8].cget("text") == cell_objects[9].cget("text") != "":
+        return True
+
+    # COLUMNS
+    if cell_objects[1].cget("text") == cell_objects[4].cget("text") == cell_objects[7].cget("text") != "":
+        return True
+    if cell_objects[2].cget("text") == cell_objects[5].cget("text") == cell_objects[8].cget("text") != "":
+        return True
+    if cell_objects[3].cget("text") == cell_objects[6].cget("text") == cell_objects[9].cget("text") != "":
+        return True
+
+    # DIAGONALS
+    if cell_objects[1].cget("text") == cell_objects[5].cget("text") == cell_objects[9].cget("text") != "":
+        return True
+    if cell_objects[3].cget("text") == cell_objects[5].cget("text") == cell_objects[7].cget("text") != "":
+        return True
+
+    return False
 
 
 def next_player():
@@ -72,12 +108,12 @@ for cell, (text, row, collum) in cells_button_initialization.items():
         width=CELL_WIDTH,
         height=CELL_HEIGHT,
         # need to use c in parameters, or it won't be correct
-        # i think its called "late binding"
+        # I think its called "late binding"
         command=lambda c=cell: cell_clicked(c)  # will call this function when clicked
     )
     # place on the grid (will be aligned together inside the frame)
     cell_button.grid(row=row, column=collum, sticky=tk.NSEW)
-    cell_objects[cell] = cell_button # save the reference
+    cell_objects[cell] = cell_button # save the reference (starts at 1)
 #endregion
 
 tk.mainloop()
