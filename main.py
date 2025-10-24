@@ -23,13 +23,6 @@ CELL_HEIGHT = 1
 
 #region Globals
 
-# dict that will be used to store the data of the cells
-cells = {
-    1: "", 2: "", 3: "",
-    4: "", 5: "", 6: "",
-    7: "", 8: "", 9: "",
-}
-
 # store the current players icon
 player_to_move = PLAYER_1
 #endregion
