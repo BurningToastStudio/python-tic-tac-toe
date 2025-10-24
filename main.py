@@ -13,26 +13,43 @@ root.resizable(False, False)
 #endregion
 
 #region Constants
-PLAYER_ICON_1 = "X"
-PLAYER_ICON_2 = "O"
+PLAYER_1 = "X"
+PLAYER_2 = "O"
 
 CELL_FONT = "Arial", 50
 CELL_WIDTH = 3
 CELL_HEIGHT = 1
 #endregion
 
-#dictionary of cells
-#tuple contains text, row, collum
+#region Globals
+
+# dict that will be used to store the data of the cells
 cells = {
-    0: ("", 0, 0), 1: ("", 0, 1), 2: ("", 0, 2),
-    3: ("", 1, 0), 4: ("", 1, 1), 5: ("", 1, 2),
-    6: ("", 2, 0), 7: ("", 2, 1), 8: ("", 2, 2),
+    1: "", 2: "", 3: "",
+    4: "", 5: "", 6: "",
+    7: "", 8: "", 9: "",
 }
 
-def cell_clicked(cell):
-    pass
+# store the current players icon
+player_to_move = PLAYER_1
+#endregion
+
+def cell_clicked(cell_number):
+    cell_objects[cell_number].config(state=tk.DISABLED) # make it not clickable
+    cell_objects[cell_number].config(text = player_to_move) # replace text with the players icon
+    next_player() # after making a move, the next player moves
+
+
+def next_player():
+    global player_to_move
+    if player_to_move == PLAYER_1:
+        player_to_move = PLAYER_2
+    else:
+        player_to_move = PLAYER_1
+
 
 #region Setup UI
+
 
 # create frame to store the buttons
 board_frame = tk.Frame(root)
@@ -41,18 +58,33 @@ board_frame = tk.Frame(root)
 # using 0.5 makes it centered
 board_frame.place(relx=0.5, rely=0.5, anchor="center")  # center the frame
 
-# loop through all cells in cells dictionary
+# dictionary of cell for init position on the grid
+# tuple contains text, row, collum
+cells_button_initialization = {
+    1: ("", 0, 0), 2: ("", 0, 1), 3: ("", 0, 2),
+    4: ("", 1, 0), 5: ("", 1, 1), 6: ("", 1, 2),
+    7: ("", 2, 0), 8: ("", 2, 1), 9: ("", 2, 2),
+}
+
+# make empty dict to store a reference to the cells
+cell_objects = {}
+
+# loop through all cells in dictionary
 # .items lets you iterate the key and values
-for cell, (text, row, collum) in cells.items():
+for cell, (text, row, collum) in cells_button_initialization.items():
     cell_button = tk.Button (
-        board_frame,
+        board_frame, # put inside frame so it can then be centered
         text=text,
         font=CELL_FONT,
         width=CELL_WIDTH,
         height=CELL_HEIGHT,
-        command=lambda: cell_clicked(cell)
+        # need to use c in parameters, or it won't be correct
+        # i think its called "late binding"
+        command=lambda c=cell: cell_clicked(c)  # will call this function when clicked
     )
+    # place on the grid (will be aligned together inside the frame)
     cell_button.grid(row=row, column=collum, sticky=tk.NSEW)
+    cell_objects[cell] = cell_button # save the reference
 #endregion
 
 tk.mainloop()
