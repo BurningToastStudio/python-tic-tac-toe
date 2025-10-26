@@ -1,4 +1,4 @@
-# Max Martin
+# Max Martin - Y10CSC
 # Python Tic Tac Toe Using Tkinter
 
 #region Imports
@@ -40,7 +40,7 @@ def win_check():
     # 1 2 3
     # 4 5 6
     # 7 8 9
-    
+
     # check if there are 3 in a row that are THE SAME and NOT blank
     # .cget gets the config data
 
