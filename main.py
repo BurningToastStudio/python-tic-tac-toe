@@ -3,7 +3,6 @@
 
 #region Imports
 import tkinter as tk
-
 #endregion
 
 #region Window Setup
@@ -26,6 +25,7 @@ CELL_HEIGHT = 1
 
 # store the current players icon
 player_to_move = PLAYER_1
+winner = None
 #endregion
 
 # when game ends, reset the game
@@ -41,15 +41,19 @@ def cell_clicked(cell_number):
     cell_objects[cell_number].config(state=tk.DISABLED) # make it not clickable
     cell_objects[cell_number].config(text = player_to_move) # replace text with the players icon
 
-    # check if someone has won yet
-    # check if game is a draw
-    if game_won() or game_drawn():
-        print("GAME OVER")
-        reset_game()
-    else:
+    if game_won_check(): # has someone won?
+        global winner
+        winner = player_to_move # set winner
+        print(f'PLAYER "{winner}" HAS WON')
+        reset_game() # reset game state
+
+    elif game_drawn_check(): # is it a draw
+        print("DRAW")
+        reset_game() # reset game state
+    else: # continue as normal
         next_player_turn()  # after making a move, the next player can move
 
-def game_won():
+def game_won_check():
     # 1 2 3
     # 4 5 6
     # 7 8 9
@@ -81,7 +85,7 @@ def game_won():
 
     return False
 
-def game_drawn():
+def game_drawn_check():
     # loop through all cells
     for cell in cell_objects:
         # if here is a blank cell, the game can continue
@@ -116,7 +120,8 @@ cells_button_initialization = {
     7: ("", 2, 0), 8: ("", 2, 1), 9: ("", 2, 2),
 }
 
-# make empty dict to store a reference to the cells
+# make empty dict to keep a reference to all the buttons
+# do this so the config of buttons can be modified
 cell_objects = {}
 
 # loop through all cells in dictionary
