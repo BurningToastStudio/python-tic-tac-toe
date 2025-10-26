@@ -3,6 +3,7 @@
 
 #region Imports
 import tkinter as tk
+
 #endregion
 
 #region Window Setup
@@ -27,16 +28,28 @@ CELL_HEIGHT = 1
 player_to_move = PLAYER_1
 #endregion
 
+# when game ends, reset the game
+def reset_game():
+    global player_to_move
+    player_to_move = PLAYER_1 # reset player
+
+    for cell in cell_objects:
+        cell_objects[cell].config(state=tk.NORMAL) # enable all buttons
+        cell_objects[cell].config(text = "") # reset text on all buttons
+
 def cell_clicked(cell_number):
     cell_objects[cell_number].config(state=tk.DISABLED) # make it not clickable
     cell_objects[cell_number].config(text = player_to_move) # replace text with the players icon
-    if not win_check(): # check if no one has won yet
-        next_player() # after making a move, the next player moves
-    else: # someone has won
+
+    # check if someone has won yet
+    # check if game is a draw
+    if game_won() or game_drawn():
         print("GAME OVER")
+        reset_game()
+    else:
+        next_player_turn()  # after making a move, the next player can move
 
-
-def win_check():
+def game_won():
     # 1 2 3
     # 4 5 6
     # 7 8 9
@@ -68,8 +81,16 @@ def win_check():
 
     return False
 
+def game_drawn():
+    # loop through all cells
+    for cell in cell_objects:
+        # if here is a blank cell, the game can continue
+        if cell_objects[cell].cget("text") == "":
+            return False
+    # if all cells are full, it is a draw, ensure to run AFTER win_check
+    return True
 
-def next_player():
+def next_player_turn():
     global player_to_move
     if player_to_move == PLAYER_1:
         player_to_move = PLAYER_2
