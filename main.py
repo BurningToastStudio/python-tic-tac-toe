@@ -1,15 +1,24 @@
 # Max Martin - Y10CSC
 # Python Tic Tac Toe Using Tkinter
 
+"""
+No AI used AT ALL
+Used only tkinter documentation
+Here are the links:
+
+https://www.geeksforgeeks.org/python/tkinter-cheat-sheet/
+https://www.geeksforgeeks.org/python/change-color-of-button-in-python-tkinter/
+https://docs.python.org/3/library/tkinter.html
+"""
+
+
 #region Imports
 import tkinter as tk
-from time import sleep
-
 #endregion
 
 #region Window Setup
 root = tk.Tk()
-root.geometry("400x400")
+root.geometry("450x450")
 root.title("Tic Tac Toe")
 root.resizable(False, False)
 #endregion
@@ -35,6 +44,9 @@ player_to_move = PLAYER_1
 winning_cells = [] # list will store the cells that are 3 in a row
 
 #endregion
+
+#region Main Logic
+
 
 # when game ends, reset the game
 def reset_game():
@@ -64,6 +76,9 @@ def cell_clicked(cell_number):
 
 def game_won_logic():
     for cell in winning_cells: # loop all winning cells
+        # can directly reference cell.config() rather than cell_objects[cell].config()
+        # this is because the iterator "cell" is a direct reference to a spicific cell object (button)
+        # rather than iterator for an index (the key) in a list
         cell.config(bg = BUTTON_BG_WON) # change color
 
     # when using tkinter i found "sleep(1)" dosent work because it freezes the GUI
@@ -75,6 +90,8 @@ def game_won_logic():
 
 def game_draw_logic():
     for cell in cell_objects:
+        # cell is just an iterator, its not a reference to anything
+        # so we cant just use "cel.config()"
         cell_objects[cell].config(bg = BUTTON_BG_DRAW)
     root.after(1000, reset_game)
 
@@ -132,6 +149,8 @@ def next_player_turn():
     else:
         player_to_move = PLAYER_1
 
+
+#endregion
 
 #region Setup UI
 
