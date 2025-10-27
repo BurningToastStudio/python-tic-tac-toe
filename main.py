@@ -3,6 +3,8 @@
 
 #region Imports
 import tkinter as tk
+from time import sleep
+
 #endregion
 
 #region Window Setup
@@ -19,13 +21,18 @@ PLAYER_2 = "O"
 CELL_FONT = "Arial", 50
 CELL_WIDTH = 3
 CELL_HEIGHT = 1
+
+BUTTON_BG = "white"       # background for normal cells
+BUTTON_BG_WON = "green"   # background for winning cells
 #endregion
 
 #region Globals
 
 # store the current players icon
 player_to_move = PLAYER_1
-winner = None
+
+winning_cells = [] # list will store the cells that are 3 in a row
+
 #endregion
 
 # when game ends, reset the game
@@ -36,51 +43,69 @@ def reset_game():
     for cell in cell_objects:
         cell_objects[cell].config(state=tk.NORMAL) # enable all buttons
         cell_objects[cell].config(text = "") # reset text on all buttons
+        cell_objects[cell].config(bg = BUTTON_BG) # change colour back to default
 
 def cell_clicked(cell_number):
     cell_objects[cell_number].config(state=tk.DISABLED) # make it not clickable
-    cell_objects[cell_number].config(text = player_to_move) # replace text with the players icon
+    cell_objects[cell_number].config(text=player_to_move)
 
     if game_won_check(): # has someone won?
-        global winner
-        winner = player_to_move # set winner
-        print(f'PLAYER "{winner}" HAS WON')
-        reset_game() # reset game state
+        for cell in cell_objects:
+            # stop interaction with the buttons until the game is reset
+            cell_objects[cell].config(state = tk.DISABLED)
+        game_won_logic()  # do win logic
 
     elif game_drawn_check(): # is it a draw
         print("DRAW")
         reset_game() # reset game state
+
     else: # continue as normal
         next_player_turn()  # after making a move, the next player can move
 
-def game_won_check():
-    # 1 2 3
-    # 4 5 6
-    # 7 8 9
+def game_won_logic():
+    for cell in winning_cells: # loop all winning cells
+        cell.config(bg = BUTTON_BG_WON) # change color
 
+    # when using tkinter i found "sleep(1)" dosent work because it freezes the GUI
+
+    # root.after schedules the function "reset_game" to run after some milliseconds
+    # this dosnt freeze the UI :)
+    root.after(1000, reset_game)
+
+def game_won_check():
+    global winning_cells
     # check if there are 3 in a row that are THE SAME and NOT blank
     # .cget gets the config data
+    # if won, set the winning cells
 
     # ROWS
     if cell_objects[1].cget("text") == cell_objects[2].cget("text") == cell_objects[3].cget("text") != "":
+        winning_cells = [cell_objects[1], cell_objects[2], cell_objects[3]]
         return True
     if cell_objects[4].cget("text") == cell_objects[5].cget("text") == cell_objects[6].cget("text") != "":
+        winning_cells = [cell_objects[4], cell_objects[5], cell_objects[6]]
         return True
     if cell_objects[7].cget("text") == cell_objects[8].cget("text") == cell_objects[9].cget("text") != "":
+        winning_cells = [cell_objects[7], cell_objects[8], cell_objects[9]]
         return True
 
     # COLUMNS
     if cell_objects[1].cget("text") == cell_objects[4].cget("text") == cell_objects[7].cget("text") != "":
+        winning_cells = [cell_objects[1], cell_objects[4], cell_objects[7]]
         return True
     if cell_objects[2].cget("text") == cell_objects[5].cget("text") == cell_objects[8].cget("text") != "":
+        winning_cells = [cell_objects[2], cell_objects[5], cell_objects[8]]
         return True
     if cell_objects[3].cget("text") == cell_objects[6].cget("text") == cell_objects[9].cget("text") != "":
+        winning_cells = [cell_objects[3], cell_objects[6], cell_objects[9]]
         return True
 
     # DIAGONALS
     if cell_objects[1].cget("text") == cell_objects[5].cget("text") == cell_objects[9].cget("text") != "":
+        winning_cells = [cell_objects[1], cell_objects[5], cell_objects[9]]
         return True
     if cell_objects[3].cget("text") == cell_objects[5].cget("text") == cell_objects[7].cget("text") != "":
+        winning_cells = [cell_objects[3], cell_objects[5], cell_objects[7]]
         return True
 
     return False
@@ -133,8 +158,9 @@ for cell, (text, row, collum) in cells_button_initialization.items():
         font=CELL_FONT,
         width=CELL_WIDTH,
         height=CELL_HEIGHT,
+        bg = BUTTON_BG,
         # need to use c in parameters, or it won't be correct
-        # I think its called "late binding"
+        # I think its called "late binding" or somthing
         command=lambda c=cell: cell_clicked(c)  # will call this function when clicked
     )
     # place on the grid (will be aligned together inside the frame)
