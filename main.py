@@ -24,6 +24,7 @@ CELL_HEIGHT = 1
 
 BUTTON_BG = "white"       # background for normal cells
 BUTTON_BG_WON = "green"   # background for winning cells
+BUTTON_BG_DRAW = "grey"   # background for winning cells
 #endregion
 
 #region Globals
@@ -56,8 +57,7 @@ def cell_clicked(cell_number):
         game_won_logic()  # do win logic
 
     elif game_drawn_check(): # is it a draw
-        print("DRAW")
-        reset_game() # reset game state
+        game_draw_logic()
 
     else: # continue as normal
         next_player_turn()  # after making a move, the next player can move
@@ -70,6 +70,12 @@ def game_won_logic():
 
     # root.after schedules the function "reset_game" to run after some milliseconds
     # this dosnt freeze the UI :)
+    root.after(1000, reset_game)
+
+
+def game_draw_logic():
+    for cell in cell_objects:
+        cell_objects[cell].config(bg = BUTTON_BG_DRAW)
     root.after(1000, reset_game)
 
 def game_won_check():
